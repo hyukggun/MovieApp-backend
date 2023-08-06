@@ -15,12 +15,7 @@ func TestConnector(t *testing.T) {
 }
 
 func TestFindUsers(t *testing.T) {
-	db, err := ConnectDatabase()
-	defer db.Close()
-	if err != nil {
-		t.Error(err)
-	}
-	if err := FindUsers(db); err != nil {
+	if _, err := FindUsers(); err != nil {
 		t.Error(err)
 	}
 }
