@@ -10,13 +10,15 @@ import (
 
 const (
 	DB_USER             = "papayetoo"
-	DB_NAME             = "example"
-	insert_user         = "INSERT INTO service_user(username, password, email) VALUES ($1, $2, $3)"
-	delter_user_by_name = "DELETE FROM service_user WHERE username = $1"
+	DB_PASSWORD         = "rhkdgus0322"
+	DB_NAME             = "movieapp"
+	select_users        = "SELECT name, email FROM users"
+	insert_user         = "INSERT INTO USERS(NAME, EMAIL) VALUES ($1, $2)"
+	delter_user_by_name = "DELETE FROM USERS WHERE NAME = $1"
 )
 
 func ConnectDatabase() (*sql.DB, error) {
-	dbinfo := fmt.Sprintf("user=%s dbname=%s sslmode=disable", DB_USER, DB_NAME)
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
 	return sql.Open("postgres", dbinfo)
 }
 
@@ -27,7 +29,7 @@ func FindUsers() ([]*model.User, error) {
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT username, password, email FROM service_user")
+	rows, err := db.Query(select_users)
 	if err != nil {
 		return []*model.User{}, err
 	}
@@ -37,7 +39,7 @@ func FindUsers() ([]*model.User, error) {
 
 	for rows.Next() {
 		u := &model.User{}
-		err := rows.Scan(&u.Name, &u.Password, &u.Email)
+		err := rows.Scan(&u.Name, &u.Email)
 		if err != nil {
 			return []*model.User{}, err
 		}
@@ -75,7 +77,7 @@ func FindUserByEmail(email string) (*model.User, error) {
 }
 
 func InsertUser(db *sql.DB, user *model.User) (sql.Result, error) {
-	return db.Exec(insert_user, user.Name, user.Password, user.Email)
+	return db.Exec(insert_user, user.Name, user.Email)
 }
 
 func DeleteUser(db *sql.DB, name string) (sql.Result, error) {
